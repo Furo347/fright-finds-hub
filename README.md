@@ -1,73 +1,66 @@
-# Welcome to your Lovable project
+# 🎬 Horror Movies Showcase
 
-## Project info
+Un site web moderne réalisé avec **React** et **TypeScript**, permettant de présenter une sélection des **meilleurs films d’horreur**.  
+Le projet a été conçu dans le cadre d’un cours visant à **apprendre le déploiement d’applications web sur Google Cloud Platform (GCP)**.
 
-**URL**: https://lovable.dev/projects/f8c800e3-cceb-497a-b6cd-af01164beccd
+---
 
-## How can I edit this code?
+## 🚀 Fonctionnalités
 
-There are several ways of editing your application.
+- 🎥 **Affichage dynamique** des meilleurs films d’horreur
+- 🧛‍♂️ Présentation avec **affiches, synopsis, années de sortie et notes**
+- 🔍 **Filtrage / tri** par année, note ou type de film (slasher, psychologique, paranormal...)
+- 🖼️ Mise en avant de visuels attractifs (posters et fonds sombres pour l’ambiance)
+- 📱 **Responsive design** pour mobile et desktop
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f8c800e3-cceb-497a-b6cd-af01164beccd) and start prompting.
+## 🧰 Technologies utilisées
 
-Changes made via Lovable will be committed automatically to this repo.
+### Front-end
+- ⚛️ **React** (avec TypeScript)
+- 🎨 **CSS / TailwindCSS**
+- 📦 **Vite**
 
-**Use your preferred IDE**
+### Déploiement & Cloud
+- ☁️ **Google Cloud Platform (GCP)**
+    - **Cloud Storage** pour héberger le site statique
+    - *(ou Cloud Run, selon ton choix de déploiement)*
+- 🔐 **IAM** pour la gestion des permissions publiques
+- 🌍 URL publique générée via GCP
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## ⚙️ Installation & Lancement
 
-Follow these steps:
+### 1️⃣ Cloner le projet
+```bash
+git clone https://github.com/ton-profil/horror-movies-showcase.git
+cd horror-movies-showcase
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 2️⃣ Installer les dépendances
+```bash
+npm install
+``` 
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 3️⃣ Lancer le projet en local
+```bash 
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 👨‍💻 Auteur
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Projet réalisé par Florentin Portets
+Étudiant en Master Développement Web — Projet GCP / React
+📅 Année : 2025
 
-**Use GitHub Codespaces**
+### 🎨 Aperçu du site
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Le site présente un design sombre et cinématographique, inspiré des affiches de films d’horreur classiques.
+Chaque fiche film contient une image, un titre, une année et une courte description.
 
-## What technologies are used for this project?
+### 📜 Licence
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/f8c800e3-cceb-497a-b6cd-af01164beccd) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Ce projet est distribué sous licence MIT.
+Tu peux le modifier et le réutiliser librement à des fins pédagogiques.

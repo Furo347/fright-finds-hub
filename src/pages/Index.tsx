@@ -15,7 +15,7 @@ const Index = () => {
       rating: 8.4,
       genre: "Horreur psychologique",
       synopsis: "Un écrivain accepte un emploi de gardien d'hiver dans un hôtel isolé avec sa femme et son fils, mais l'hôtel cache des secrets terrifiants.",
-      imageUrl: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=80"
+      imageUrl: "/public/shining.jpg"
     },
     {
       title: "Halloween",
@@ -24,7 +24,7 @@ const Index = () => {
       rating: 7.7,
       genre: "Slasher",
       synopsis: "Un tueur masqué s'échappe d'un hôpital psychiatrique et retourne dans sa ville natale pour terroriser une jeune baby-sitter.",
-      imageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=800&q=80"
+      imageUrl: "/public/halloween.jpg"
     },
     {
       title: "The Exorcist",
@@ -33,7 +33,7 @@ const Index = () => {
       rating: 8.1,
       genre: "Possession démoniaque",
       synopsis: "Une jeune fille est possédée par une entité démoniaque. Sa mère fait appel à deux prêtres pour un exorcisme.",
-      imageUrl: "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=800&q=80"
+      imageUrl: "/public/exorcist.jpg"
     },
     {
       title: "Alien",
@@ -42,7 +42,7 @@ const Index = () => {
       rating: 8.5,
       genre: "Horreur science-fiction",
       synopsis: "L'équipage d'un vaisseau spatial découvre une forme de vie extraterrestre mortelle à bord.",
-      imageUrl: "https://images.unsplash.com/photo-1574267432644-f410f8ec2840?w=800&q=80"
+      imageUrl: "/public/alien.jpg"
     },
     {
       title: "Psycho",
@@ -51,7 +51,7 @@ const Index = () => {
       rating: 8.5,
       genre: "Thriller psychologique",
       synopsis: "Une jeune femme en fuite s'arrête dans un motel isolé géré par un jeune homme sous la domination de sa mère.",
-      imageUrl: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=800&q=80"
+      imageUrl: "/public/psycho.jpg"
     },
     {
       title: "The Thing",
@@ -60,7 +60,7 @@ const Index = () => {
       rating: 8.2,
       genre: "Horreur science-fiction",
       synopsis: "Une équipe de recherche en Antarctique découvre un organisme extraterrestre qui peut imiter n'importe quelle forme de vie.",
-      imageUrl: "https://images.unsplash.com/photo-1579548122080-c35fd6820ecb?w=800&q=80"
+      imageUrl: "/public/the_thing.jpg"
     },
     {
       title: "A Nightmare on Elm Street",
@@ -69,7 +69,7 @@ const Index = () => {
       rating: 7.4,
       genre: "Slasher surnaturel",
       synopsis: "Un tueur défiguré hante les rêves d'adolescents, les tuant dans leur sommeil.",
-      imageUrl: "https://images.unsplash.com/photo-1574273670815-11f04b1074f3?w=800&q=80"
+      imageUrl: "/public/nightmare.jpg"
     },
     {
       title: "Rosemary's Baby",
@@ -78,7 +78,7 @@ const Index = () => {
       rating: 8.0,
       genre: "Horreur psychologique",
       synopsis: "Une jeune femme enceinte soupçonne que ses voisins font partie d'une secte satanique ayant des plans pour son bébé.",
-      imageUrl: "https://images.unsplash.com/photo-1542887800-faca0261c9e1?w=800&q=80"
+      imageUrl: "/public/rosemary.jpg"
     },
     {
       title: "The Texas Chain Saw Massacre",
@@ -87,7 +87,7 @@ const Index = () => {
       rating: 7.5,
       genre: "Slasher",
       synopsis: "Cinq amis tombent sur une famille de cannibales dans le Texas rural, dont un tueur à la tronçonneuse masqué.",
-      imageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=800&q=80"
+      imageUrl: "/public/chainsaw.jpg"
     }
   ];
 
@@ -101,12 +101,12 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
-        
+
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <h1 className="text-6xl md:text-7xl font-bold mb-6 text-foreground drop-shadow-[0_0_20px_rgba(139,0,0,0.8)]">
             Films d'Horreur
@@ -114,7 +114,7 @@ const Index = () => {
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 drop-shadow-lg">
             Les classiques qui ont défini le genre
           </p>
-          
+
           <div className="relative max-w-md mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <Input
@@ -135,7 +135,7 @@ const Index = () => {
             <MovieCard key={index} {...movie} />
           ))}
         </div>
-        
+
         {filteredMovies.length === 0 && (
           <div className="text-center py-16">
             <p className="text-xl text-muted-foreground">
