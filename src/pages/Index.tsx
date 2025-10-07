@@ -2,7 +2,18 @@ import { useState } from "react";
 import MovieCard from "@/components/MovieCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+
 import heroImage from "@/assets/hero-horror.jpg";
+import shiningImage from "@/assets/shining.jpg";
+import halloweenImage from "@/assets/halloween.jpg";
+import exorcistImage from "@/assets/exorcist.jpg";
+import alienImage from "@/assets/alien.jpg";
+import psychoImage from "@/assets/psycho.jpg";
+import thingImage from "@/assets/the_thing.jpg";
+import nightmareImage from "@/assets/nightmare.jpg";
+import rosemaryImage from "@/assets/rosemary.jpg";
+import chainsawImage from "@/assets/chainsaw.jpg";
+
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,7 +26,7 @@ const Index = () => {
       rating: 8.4,
       genre: "Horreur psychologique",
       synopsis: "Un écrivain accepte un emploi de gardien d'hiver dans un hôtel isolé avec sa femme et son fils, mais l'hôtel cache des secrets terrifiants.",
-      imageUrl: "/public/shining.jpg"
+      imageUrl: shiningImage
     },
     {
       title: "Halloween",
@@ -24,7 +35,7 @@ const Index = () => {
       rating: 7.7,
       genre: "Slasher",
       synopsis: "Un tueur masqué s'échappe d'un hôpital psychiatrique et retourne dans sa ville natale pour terroriser une jeune baby-sitter.",
-      imageUrl: "/public/halloween.jpg"
+      imageUrl: halloweenImage
     },
     {
       title: "The Exorcist",
@@ -33,7 +44,7 @@ const Index = () => {
       rating: 8.1,
       genre: "Possession démoniaque",
       synopsis: "Une jeune fille est possédée par une entité démoniaque. Sa mère fait appel à deux prêtres pour un exorcisme.",
-      imageUrl: "/public/exorcist.jpg"
+      imageUrl: exorcistImage
     },
     {
       title: "Alien",
@@ -42,7 +53,7 @@ const Index = () => {
       rating: 8.5,
       genre: "Horreur science-fiction",
       synopsis: "L'équipage d'un vaisseau spatial découvre une forme de vie extraterrestre mortelle à bord.",
-      imageUrl: "/public/alien.jpg"
+      imageUrl: alienImage
     },
     {
       title: "Psycho",
@@ -51,7 +62,7 @@ const Index = () => {
       rating: 8.5,
       genre: "Thriller psychologique",
       synopsis: "Une jeune femme en fuite s'arrête dans un motel isolé géré par un jeune homme sous la domination de sa mère.",
-      imageUrl: "/public/psycho.jpg"
+      imageUrl: psychoImage
     },
     {
       title: "The Thing",
@@ -60,7 +71,7 @@ const Index = () => {
       rating: 8.2,
       genre: "Horreur science-fiction",
       synopsis: "Une équipe de recherche en Antarctique découvre un organisme extraterrestre qui peut imiter n'importe quelle forme de vie.",
-      imageUrl: "/public/the_thing.jpg"
+      imageUrl: thingImage
     },
     {
       title: "A Nightmare on Elm Street",
@@ -69,7 +80,7 @@ const Index = () => {
       rating: 7.4,
       genre: "Slasher surnaturel",
       synopsis: "Un tueur défiguré hante les rêves d'adolescents, les tuant dans leur sommeil.",
-      imageUrl: "/public/nightmare.jpg"
+      imageUrl: nightmareImage
     },
     {
       title: "Rosemary's Baby",
@@ -78,7 +89,7 @@ const Index = () => {
       rating: 8.0,
       genre: "Horreur psychologique",
       synopsis: "Une jeune femme enceinte soupçonne que ses voisins font partie d'une secte satanique ayant des plans pour son bébé.",
-      imageUrl: "/public/rosemary.jpg"
+      imageUrl: rosemaryImage
     },
     {
       title: "The Texas Chain Saw Massacre",
@@ -87,7 +98,7 @@ const Index = () => {
       rating: 7.5,
       genre: "Slasher",
       synopsis: "Cinq amis tombent sur une famille de cannibales dans le Texas rural, dont un tueur à la tronçonneuse masqué.",
-      imageUrl: "/public/chainsaw.jpg"
+      imageUrl: chainsawImage
     }
   ];
 
