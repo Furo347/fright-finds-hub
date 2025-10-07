@@ -1,7 +1,13 @@
 runtime: nodejs20
+
 handlers:
+  # Serve index.html à la racine
   - url: /
     static_files: dist/index.html
     upload: dist/index.html
-  - url: / (.*)
-    static_dir: dist
+
+  # Serve tous les fichiers du dossier dist/assets
+  - url: /assets
+    static_dir: dist/assets
+
+  # Serve le CSS et JS (Vite met souvent tout dans assets, donc déjà couvert)
