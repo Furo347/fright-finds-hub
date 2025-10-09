@@ -111,7 +111,7 @@ const Index = () => {
           <Input placeholder="Note (0-10)" type="number" step="0.1" id="rating" onChange={(e) => (window as any).newRating = Number(e.target.value)} />
           <Input placeholder="Genre" id="genre" onChange={(e) => (window as any).newGenre = e.target.value} />
           <Input placeholder="Synopsis" id="synopsis" onChange={(e) => (window as any).newSynopsis = e.target.value} />
-          <Input placeholder="Image URL" id="imageUrl" onChange={(e) => (window as any).newImageUrl = e.target.value} />
+          <Input placeholder="Image URL" id="imageUrl" defaultValue="https://storage.googleapis.com/fright-finds-hub-images/alien.jpg" onChange={(e) => (window as any).newImageUrl = e.target.value} />
           <button
             className="h-10 rounded bg-primary text-primary-foreground px-4"
             onClick={() =>
@@ -122,7 +122,7 @@ const Index = () => {
                 rating: (window as any).newRating || 5,
                 genre: (window as any).newGenre || "",
                 synopsis: (window as any).newSynopsis || "",
-                imageUrl: (window as any).newImageUrl || "/assets/placeholder.svg",
+                imageUrl: (window as any).newImageUrl || "https://storage.googleapis.com/fright-finds-hub-images/alien.jpg",
               })
             }
           >

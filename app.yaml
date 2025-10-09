@@ -20,6 +20,7 @@ env_variables:
   DB_URL: "postgres://fright_app:App!Fright2025@/fright_finds?host=/cloudsql/fright-finds-hub:europe-west9:fright-finds-sql"
   NODE_ENV: "production"
   NPM_CONFIG_PRODUCTION: "true"
+  GCS_IMAGES_BASE: "https://storage.googleapis.com/fright-finds-hub-images"
 
 beta_settings:
   cloud_sql_instances: "fright-finds-hub:europe-west9:fright-finds-sql"

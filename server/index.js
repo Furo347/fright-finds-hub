@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
 import { z } from "zod";
-import dbModule, { queries, seedIfEmpty, initDb } from "./db.js";
+import dbModule, { queries, seedIfEmpty, initDb, migrateImageUrlsToGcs } from "./db.js";
 
 dotenv.config();
 
@@ -21,6 +21,7 @@ const dataFilePath = path.join(__dirnameResolved, "server", "movies.json");
 // Initialize DB and seed
 await initDb();
 await seedIfEmpty();
+await migrateImageUrlsToGcs();
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
@@ -32,14 +33,16 @@ app.get("/api/movies", async (_req, res) => {
 });
 
 app.post("/api/movies", async (req, res) => {
+  const toInt = (v) => (typeof v === "string" ? parseInt(v, 10) : v);
+  const toFloat = (v) => (typeof v === "string" ? parseFloat(v) : v);
   const schema = z.object({
     title: z.string().min(1),
-    year: z.number().int().min(1888),
+    year: z.preprocess(toInt, z.number().int().min(1888)),
     director: z.string().min(1),
-    rating: z.number().min(0).max(10),
+    rating: z.preprocess(toFloat, z.number().min(0).max(10)),
     genre: z.string().min(1),
     synopsis: z.string().min(1),
-    imageUrl: z.string().min(1),
+    imageUrl: z.string().url().min(1),
   });
   const parse = schema.safeParse(req.body);
   if (!parse.success) {

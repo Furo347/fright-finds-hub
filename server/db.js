@@ -57,9 +57,10 @@ export async function seedIfEmpty() {
   const items = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
   const count = await countMovies();
   if (count > 0) return;
+  const base = process.env.GCS_IMAGES_BASE || "https://storage.googleapis.com/fright-finds-hub-images";
   for (const row of items) {
-    // simple sequential insert to keep code straightforward
-    await queries.insert(row.title, row.year, row.director, row.rating, row.genre, row.synopsis, row.imageUrl);
+    const normalizedUrl = normalizeImageUrl(row.imageUrl, base);
+    await queries.insert(row.title, row.year, row.director, row.rating, row.genre, row.synopsis, normalizedUrl);
   }
 }
 
@@ -75,14 +76,24 @@ async function countMovies() {
 export const queries = {
   list: async () => {
     if (USE_PG) {
-      const r = await pgPool.query("SELECT * FROM movies ORDER BY id DESC");
+      const r = await pgPool.query(
+        `SELECT id, title, year, director, rating, genre, synopsis,
+                imageurl AS "imageUrl"
+         FROM movies
+         ORDER BY id DESC`
+      );
       return r.rows;
     }
     return sqliteDb.prepare("SELECT * FROM movies ORDER BY id DESC").all();
   },
   get: async (id) => {
     if (USE_PG) {
-      const r = await pgPool.query("SELECT * FROM movies WHERE id = $1", [id]);
+      const r = await pgPool.query(
+        `SELECT id, title, year, director, rating, genre, synopsis,
+                imageurl AS "imageUrl"
+         FROM movies WHERE id = $1`,
+        [id]
+      );
       return r.rows[0] || null;
     }
     return sqliteDb.prepare("SELECT * FROM movies WHERE id = ?").get(id) || null;
@@ -90,8 +101,9 @@ export const queries = {
   insert: async (title, year, director, rating, genre, synopsis, imageUrl) => {
     if (USE_PG) {
       const r = await pgPool.query(
-        `INSERT INTO movies (title, year, director, rating, genre, synopsis, imageUrl)
-         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+        `INSERT INTO movies (title, year, director, rating, genre, synopsis, imageurl)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING id, title, year, director, rating, genre, synopsis, imageurl AS "imageUrl"`,
         [title, year, director, rating, genre, synopsis, imageUrl]
       );
       return r.rows[0];
@@ -112,12 +124,64 @@ export const queries = {
     sqliteDb.prepare("DELETE FROM movies WHERE id = ?").run(id);
     return true;
   },
+  updateImageUrl: async (id, imageUrl) => {
+    if (USE_PG) {
+      await pgPool.query("UPDATE movies SET imageurl = $1 WHERE id = $2", [imageUrl, id]);
+      return true;
+    }
+    sqliteDb.prepare("UPDATE movies SET imageUrl = ? WHERE id = ?").run(imageUrl, id);
+    return true;
+  },
 };
 
 export default {
   initDb,
   seedIfEmpty,
   queries,
+  migrateImageUrlsToGcs,
 };
+
+function normalizeImageUrl(imageUrl, gcsBase) {
+  // Si l’URL est déjà absolue (http/https), la laisser telle quelle
+  if (/^https?:\/\//i.test(imageUrl)) return imageUrl;
+  // Si c’est un chemin Vite /assets/<name>-<hash>.ext → transformer en <name>.ext dans le bucket
+  // Exemple: /assets/alien-DzH1BqCo.jpg -> alien.jpg
+  const match = imageUrl.match(/\/assets\/([^\/]+)\.(\w+)$/);
+  if (!match) return imageUrl;
+  const fileWithHash = match[1]; // alien-DzH1BqCo
+  const ext = match[2]; // jpg
+  const baseName = fileWithHash.split("-")[0]; // alien
+  return `${gcsBase}/${baseName}.${ext}`;
+}
+
+// Migration au démarrage: convertir les anciennes URLs /assets/* en URLs GCS stables
+export async function migrateImageUrlsToGcs() {
+  const base = process.env.GCS_IMAGES_BASE || "https://storage.googleapis.com/fright-finds-hub-images";
+  const rows = await queries.list();
+  const titleToFile = new Map([
+    ["the shining", "shining.jpg"],
+    ["halloween", "halloween.jpg"],
+    ["the exorcist", "exorcist.jpg"],
+    ["alien", "alien.jpg"],
+    ["psycho", "psycho.jpg"],
+    ["the thing", "the_thing.jpg"],
+    ["a nightmare on elm street", "nightmare.jpg"],
+    ["rosemary's baby", "rosemary.jpg"],
+    ["the texas chain saw massacre", "chainsaw.jpg"],
+    ["peur", "peur.jpg"],
+    ["hero", "hero-horror.jpg"],
+  ]);
+  for (const row of rows) {
+    const currentUrl = (row.imageUrl || row.imageurl || "");
+    if (typeof currentUrl === "string" && currentUrl.startsWith("/assets/")) {
+      let normalized = normalizeImageUrl(currentUrl, base);
+      const key = String(row.title || "").trim().toLowerCase();
+      if (titleToFile.has(key)) {
+        normalized = `${base}/${titleToFile.get(key)}`;
+      }
+      if (normalized !== currentUrl) await queries.updateImageUrl(row.id, normalized);
+    }
+  }
+}
 
 

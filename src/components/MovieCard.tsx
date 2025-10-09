@@ -23,6 +23,11 @@ const MovieCard = ({ id, title, year, director, rating, genre, synopsis, imageUr
           src={imageUrl} 
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          onError={(e) => {
+            const target = e.currentTarget as HTMLImageElement;
+            target.onerror = null;
+            target.src = "https://storage.googleapis.com/fright-finds-hub-images/hero-horror.jpg";
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
