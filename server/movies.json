@@ -1,0 +1,85 @@
+[
+  {
+    "title": "The Shining",
+    "year": 1980,
+    "director": "Stanley Kubrick",
+    "rating": 8.4,
+    "genre": "Horreur psychologique",
+    "synopsis": "Un écrivain accepte un emploi de gardien d'hiver dans un hôtel isolé avec sa femme et son fils, mais l'hôtel cache des secrets terrifiants.",
+    "imageUrl": "/assets/shining-Dox0u1j_.jpg"
+  },
+  {
+    "title": "Halloween",
+    "year": 1978,
+    "director": "John Carpenter",
+    "rating": 7.7,
+    "genre": "Slasher",
+    "synopsis": "Un tueur masqué s'échappe d'un hôpital psychiatrique et retourne dans sa ville natale pour terroriser une jeune baby-sitter.",
+    "imageUrl": "/assets/halloween-Dhd1G4nb.jpg"
+  },
+  {
+    "title": "The Exorcist",
+    "year": 1973,
+    "director": "William Friedkin",
+    "rating": 8.1,
+    "genre": "Possession démoniaque",
+    "synopsis": "Une jeune fille est possédée par une entité démoniaque. Sa mère fait appel à deux prêtres pour un exorcisme.",
+    "imageUrl": "/assets/exorcist-Dga3_3Td.jpg"
+  },
+  {
+    "title": "Alien",
+    "year": 1979,
+    "director": "Ridley Scott",
+    "rating": 8.5,
+    "genre": "Horreur science-fiction",
+    "synopsis": "L'équipage d'un vaisseau spatial découvre une forme de vie extraterrestre mortelle à bord.",
+    "imageUrl": "/assets/alien-DzH1BqCo.jpg"
+  },
+  {
+    "title": "Psycho",
+    "year": 1960,
+    "director": "Alfred Hitchcock",
+    "rating": 8.5,
+    "genre": "Thriller psychologique",
+    "synopsis": "Une jeune femme en fuite s'arrête dans un motel isolé géré par un jeune homme sous la domination de sa mère.",
+    "imageUrl": "/assets/psycho-BGUAvPiD.jpg"
+  },
+  {
+    "title": "The Thing",
+    "year": 1982,
+    "director": "John Carpenter",
+    "rating": 8.2,
+    "genre": "Horreur science-fiction",
+    "synopsis": "Une équipe de recherche en Antarctique découvre un organisme extraterrestre qui peut imiter n'importe quelle forme de vie.",
+    "imageUrl": "/assets/the_thing-C0BAETWf.jpg"
+  },
+  {
+    "title": "A Nightmare on Elm Street",
+    "year": 1984,
+    "director": "Wes Craven",
+    "rating": 7.4,
+    "genre": "Slasher surnaturel",
+    "synopsis": "Un tueur défiguré hante les rêves d'adolescents, les tuant dans leur sommeil.",
+    "imageUrl": "/assets/nightmare-JKxLoWBk.jpg"
+  },
+  {
+    "title": "Rosemary's Baby",
+    "year": 1968,
+    "director": "Roman Polanski",
+    "rating": 8.0,
+    "genre": "Horreur psychologique",
+    "synopsis": "Une jeune femme enceinte soupçonne que ses voisins font partie d'une secte satanique ayant des plans pour son bébé.",
+    "imageUrl": "/assets/rosemary-Ctx-DJON.jpg"
+  },
+  {
+    "title": "The Texas Chain Saw Massacre",
+    "year": 1974,
+    "director": "Tobe Hooper",
+    "rating": 7.5,
+    "genre": "Slasher",
+    "synopsis": "Cinq amis tombent sur une famille de cannibales dans le Texas rural, dont un tueur à la tronçonneuse masqué.",
+    "imageUrl": "/assets/chainsaw-CStzNDm0.jpg"
+  }
+]
+
+

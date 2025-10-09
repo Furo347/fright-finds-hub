@@ -1,112 +1,74 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import MovieCard from "@/components/MovieCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
 import heroImage from "@/assets/hero-horror.jpg";
-import shiningImage from "@/assets/shining.jpg";
-import halloweenImage from "@/assets/halloween.jpg";
-import exorcistImage from "@/assets/exorcist.jpg";
-import alienImage from "@/assets/alien.jpg";
-import psychoImage from "@/assets/psycho.jpg";
-import thingImage from "@/assets/the_thing.jpg";
-import nightmareImage from "@/assets/nightmare.jpg";
-import rosemaryImage from "@/assets/rosemary.jpg";
-import chainsawImage from "@/assets/chainsaw.jpg";
 
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const queryClient = useQueryClient();
 
-  const horrorMovies = [
-    {
-      title: "The Shining",
-      year: 1980,
-      director: "Stanley Kubrick",
-      rating: 8.4,
-      genre: "Horreur psychologique",
-      synopsis: "Un écrivain accepte un emploi de gardien d'hiver dans un hôtel isolé avec sa femme et son fils, mais l'hôtel cache des secrets terrifiants.",
-      imageUrl: shiningImage
+  const { data: movies, isLoading, isError } = useQuery({
+    queryKey: ["movies"],
+    queryFn: async () => {
+      const res = await fetch("/api/movies");
+      if (!res.ok) throw new Error("Failed to fetch movies");
+      return (await res.json()) as Array<{
+        id?: number;
+        title: string;
+        year: number;
+        director: string;
+        rating: number;
+        genre: string;
+        synopsis: string;
+        imageUrl: string;
+      }>;
     },
-    {
-      title: "Halloween",
-      year: 1978,
-      director: "John Carpenter",
-      rating: 7.7,
-      genre: "Slasher",
-      synopsis: "Un tueur masqué s'échappe d'un hôpital psychiatrique et retourne dans sa ville natale pour terroriser une jeune baby-sitter.",
-      imageUrl: halloweenImage
-    },
-    {
-      title: "The Exorcist",
-      year: 1973,
-      director: "William Friedkin",
-      rating: 8.1,
-      genre: "Possession démoniaque",
-      synopsis: "Une jeune fille est possédée par une entité démoniaque. Sa mère fait appel à deux prêtres pour un exorcisme.",
-      imageUrl: exorcistImage
-    },
-    {
-      title: "Alien",
-      year: 1979,
-      director: "Ridley Scott",
-      rating: 8.5,
-      genre: "Horreur science-fiction",
-      synopsis: "L'équipage d'un vaisseau spatial découvre une forme de vie extraterrestre mortelle à bord.",
-      imageUrl: alienImage
-    },
-    {
-      title: "Psycho",
-      year: 1960,
-      director: "Alfred Hitchcock",
-      rating: 8.5,
-      genre: "Thriller psychologique",
-      synopsis: "Une jeune femme en fuite s'arrête dans un motel isolé géré par un jeune homme sous la domination de sa mère.",
-      imageUrl: psychoImage
-    },
-    {
-      title: "The Thing",
-      year: 1982,
-      director: "John Carpenter",
-      rating: 8.2,
-      genre: "Horreur science-fiction",
-      synopsis: "Une équipe de recherche en Antarctique découvre un organisme extraterrestre qui peut imiter n'importe quelle forme de vie.",
-      imageUrl: thingImage
-    },
-    {
-      title: "A Nightmare on Elm Street",
-      year: 1984,
-      director: "Wes Craven",
-      rating: 7.4,
-      genre: "Slasher surnaturel",
-      synopsis: "Un tueur défiguré hante les rêves d'adolescents, les tuant dans leur sommeil.",
-      imageUrl: nightmareImage
-    },
-    {
-      title: "Rosemary's Baby",
-      year: 1968,
-      director: "Roman Polanski",
-      rating: 8.0,
-      genre: "Horreur psychologique",
-      synopsis: "Une jeune femme enceinte soupçonne que ses voisins font partie d'une secte satanique ayant des plans pour son bébé.",
-      imageUrl: rosemaryImage
-    },
-    {
-      title: "The Texas Chain Saw Massacre",
-      year: 1974,
-      director: "Tobe Hooper",
-      rating: 7.5,
-      genre: "Slasher",
-      synopsis: "Cinq amis tombent sur une famille de cannibales dans le Texas rural, dont un tueur à la tronçonneuse masqué.",
-      imageUrl: chainsawImage
-    }
-  ];
+  });
 
-  const filteredMovies = horrorMovies.filter(movie =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    movie.director.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    movie.genre.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const createMovie = useMutation({
+    mutationFn: async (payload: {
+      title: string;
+      year: number;
+      director: string;
+      rating: number;
+      genre: string;
+      synopsis: string;
+      imageUrl: string;
+    }) => {
+      const res = await fetch("/api/movies", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Failed to create movie");
+      return res.json();
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["movies"] }),
+  });
+
+  const deleteMovie = useMutation({
+    mutationFn: async (id?: number) => {
+      if (!id) throw new Error("Missing id");
+      const res = await fetch(`/api/movies/${id}`, { method: "DELETE" });
+      if (!res.ok && res.status !== 204) throw new Error("Failed to delete");
+      return true;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["movies"] }),
+  });
+
+  const filteredMovies = useMemo(() => {
+    const list = movies ?? [];
+    const q = searchQuery.toLowerCase();
+    return list.filter((movie) =>
+      movie.title.toLowerCase().includes(q) ||
+      movie.director.toLowerCase().includes(q) ||
+      movie.genre.toLowerCase().includes(q)
+    );
+  }, [movies, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -141,11 +103,49 @@ const Index = () => {
 
       {/* Movies Grid */}
       <section className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredMovies.map((movie, index) => (
-            <MovieCard key={index} {...movie} />
-          ))}
+        {/* Simple Add form */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+          <Input placeholder="Titre" id="title" onChange={(e) => (window as any).newTitle = e.target.value} />
+          <Input placeholder="Année" type="number" id="year" onChange={(e) => (window as any).newYear = Number(e.target.value)} />
+          <Input placeholder="Réalisateur" id="director" onChange={(e) => (window as any).newDirector = e.target.value} />
+          <Input placeholder="Note (0-10)" type="number" step="0.1" id="rating" onChange={(e) => (window as any).newRating = Number(e.target.value)} />
+          <Input placeholder="Genre" id="genre" onChange={(e) => (window as any).newGenre = e.target.value} />
+          <Input placeholder="Synopsis" id="synopsis" onChange={(e) => (window as any).newSynopsis = e.target.value} />
+          <Input placeholder="Image URL" id="imageUrl" onChange={(e) => (window as any).newImageUrl = e.target.value} />
+          <button
+            className="h-10 rounded bg-primary text-primary-foreground px-4"
+            onClick={() =>
+              createMovie.mutate({
+                title: (window as any).newTitle || "",
+                year: (window as any).newYear || 2000,
+                director: (window as any).newDirector || "",
+                rating: (window as any).newRating || 5,
+                genre: (window as any).newGenre || "",
+                synopsis: (window as any).newSynopsis || "",
+                imageUrl: (window as any).newImageUrl || "/assets/placeholder.svg",
+              })
+            }
+          >
+            Ajouter le film
+          </button>
         </div>
+        {isLoading && (
+          <div className="text-center py-16">
+            <p className="text-xl text-muted-foreground">Chargement des films…</p>
+          </div>
+        )}
+        {isError && (
+          <div className="text-center py-16">
+            <p className="text-xl text-muted-foreground">Erreur lors du chargement des films</p>
+          </div>
+        )}
+        {!isLoading && !isError && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredMovies.map((movie, index) => (
+              <MovieCard key={index} {...movie} onDelete={(id) => deleteMovie.mutate(id)} />
+            ))}
+          </div>
+        )}
 
         {filteredMovies.length === 0 && (
           <div className="text-center py-16">
