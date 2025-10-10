@@ -11,6 +11,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  // Persist the token in localStorage to keep admin session across refreshes
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("auth_token"));
 
   useEffect(() => {
@@ -21,6 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [token]);
 
+  // Perform login against the backend, store JWT if successful
   const login = useCallback(async (username: string, password: string) => {
     const res = await fetch("/api/login", {
       method: "POST",
@@ -36,6 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return false;
   }, []);
 
+  // Clear local session
   const logout = useCallback(() => {
     setToken(null);
   }, []);

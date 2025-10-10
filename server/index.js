@@ -16,10 +16,9 @@ const __dirnameResolved = path.resolve();
 app.use(cors());
 app.use(express.json());
 
-// Simple in-file data source for now
-const dataFilePath = path.join(__dirnameResolved, "server", "movies.json");
+// Note: movies are managed in the database via queries; no file-based data anymore.
 
-// Initialize DB and seed
+// Initialize DB and seed initial dataset (first run only), then migrate image URLs
 await initDb();
 await seedIfEmpty();
 await migrateImageUrlsToGcs();
