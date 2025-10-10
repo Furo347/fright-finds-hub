@@ -7,8 +7,24 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import { AuthProvider } from "@/hooks/use-auth";
+import { useAuth } from "@/hooks/use-auth";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const queryClient = new QueryClient();
+
+function HeaderAuth() {
+  const { isAdmin, logout } = useAuth();
+  return (
+    <div className="fixed top-0 right-0 z-50 p-4">
+      {!isAdmin ? (
+        <Link to="/login"><Button size="sm" variant="secondary">Se connecter</Button></Link>
+      ) : (
+        <Button size="sm" variant="outline" onClick={logout}>Se déconnecter</Button>
+      )}
+    </div>
+  );
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -17,6 +33,7 @@ const App = () => (
       <Sonner />
       <AuthProvider>
         <BrowserRouter>
+          <HeaderAuth />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />

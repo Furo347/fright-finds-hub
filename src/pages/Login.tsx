@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -26,6 +27,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <form onSubmit={onSubmit} className="w-full max-w-sm space-y-4 bg-card p-6 rounded border border-border">
         <h1 className="text-2xl font-bold text-foreground">Connexion Admin</h1>
+        <Link to="/" className="text-sm text-primary underline">← Revenir à l'accueil</Link>
         <div>
           <label className="block text-sm text-muted-foreground mb-1">Identifiant</label>
           <Input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="admin" />
