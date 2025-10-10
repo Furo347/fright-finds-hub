@@ -3,6 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import MovieCard from "@/components/MovieCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
 
 import heroImage from "@/assets/hero-horror.jpg";
 
@@ -10,6 +13,7 @@ import heroImage from "@/assets/hero-horror.jpg";
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
+  const { isAdmin, authHeaders, logout } = useAuth();
 
   const { data: movies, isLoading, isError } = useQuery({
     queryKey: ["movies"],
@@ -41,7 +45,7 @@ const Index = () => {
     }) => {
       const res = await fetch("/api/movies", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Failed to create movie");
@@ -53,7 +57,7 @@ const Index = () => {
   const deleteMovie = useMutation({
     mutationFn: async (id?: number) => {
       if (!id) throw new Error("Missing id");
-      const res = await fetch(`/api/movies/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/movies/${id}`, { method: "DELETE", headers: { ...authHeaders() } });
       if (!res.ok && res.status !== 204) throw new Error("Failed to delete");
       return true;
     },
@@ -103,7 +107,19 @@ const Index = () => {
 
       {/* Movies Grid */}
       <section className="container mx-auto px-4 py-16">
-        {/* Simple Add form */}
+        <div className="flex items-center justify-between mb-6">
+          <div />
+          <div className="flex items-center gap-3">
+            {!isAdmin ? (
+              <Link to="/login"><Button variant="secondary">Se connecter</Button></Link>
+            ) : (
+              <Button variant="outline" onClick={logout}>Se déconnecter</Button>
+            )}
+          </div>
+        </div>
+
+        {/* Simple Add form (admin only) */}
+        {isAdmin && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
           <Input placeholder="Titre" id="title" onChange={(e) => (window as any).newTitle = e.target.value} />
           <Input placeholder="Année" type="number" id="year" onChange={(e) => (window as any).newYear = Number(e.target.value)} />
@@ -129,6 +145,7 @@ const Index = () => {
             Ajouter le film
           </button>
         </div>
+        )}
         {isLoading && (
           <div className="text-center py-16">
             <p className="text-xl text-muted-foreground">Chargement des films…</p>
@@ -142,7 +159,7 @@ const Index = () => {
         {!isLoading && !isError && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredMovies.map((movie, index) => (
-              <MovieCard key={index} {...movie} onDelete={(id) => deleteMovie.mutate(id)} />
+              <MovieCard key={index} {...movie} onDelete={isAdmin ? (id) => deleteMovie.mutate(id) : undefined} />
             ))}
           </div>
         )}

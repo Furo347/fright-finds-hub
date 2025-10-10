@@ -49,6 +49,114 @@ npm install
 npm run dev
 ```
 
+### 🔐 Authentification Admin (API)
+
+L'API protège l'ajout et la suppression de films via un JWT admin. Seuls les administrateurs authentifiés peuvent modifier la base de données.
+
+#### 1️⃣ Configuration des variables d'environnement
+
+Créez un fichier `.env` à la racine du projet avec les variables suivantes :
+
+```env
+# Identifiants admin (changez ces valeurs en production !)
+ADMIN_USER=admin
+ADMIN_PASS=password
+
+# Secret JWT (changez-le en production !)
+JWT_SECRET=dev-secret-change-me-in-production
+
+# Base URL pour les images GCS (optionnel)
+GCS_IMAGES_BASE=https://storage.googleapis.com/fright-finds-hub-images
+
+# URL de base de données (optionnel - utilise SQLite par défaut)
+# DB_URL=postgresql://user:password@localhost:5432/database
+```
+
+#### 2️⃣ Démarrage du serveur
+
+```bash
+npm run server
+```
+
+Le serveur sera accessible sur `http://localhost:3000`
+
+#### 3️⃣ Authentification et utilisation
+
+**Obtenir un token d'authentification :**
+
+**PowerShell (Windows) :**
+```powershell
+$body = @{username="admin"; password="password"} | ConvertTo-Json
+$response = Invoke-RestMethod -Uri "http://localhost:3000/api/login" -Method POST -Body $body -ContentType "application/json"
+$token = $response.token
+Write-Host "Token: $token"
+```
+
+**Bash/Linux/Mac :**
+```bash
+curl -X POST http://localhost:3000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"password"}'
+```
+
+**Ajouter un nouveau film :**
+
+**PowerShell :**
+```powershell
+$headers = @{"Authorization" = "Bearer $token"; "Content-Type" = "application/json"}
+$movie = @{
+  title="Mon Film d'Horreur"
+  year=2024
+  director="Réalisateur"
+  rating=8.5
+  genre="Horror"
+  synopsis="Description du film..."
+  imageUrl="https://exemple.com/image.jpg"
+} | ConvertTo-Json
+$response = Invoke-RestMethod -Uri "http://localhost:3000/api/movies" -Method POST -Headers $headers -Body $movie
+Write-Host "Film créé avec ID: $($response.id)"
+```
+
+**Bash :**
+```bash
+curl -X POST http://localhost:3000/api/movies \
+  -H "Authorization: Bearer VOTRE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Mon Film","year":2024,"director":"Réalisateur","rating":8.5,"genre":"Horror","synopsis":"Description","imageUrl":"https://exemple.com/image.jpg"}'
+```
+
+**Supprimer un film :**
+
+**PowerShell :**
+```powershell
+$headers = @{"Authorization" = "Bearer $token"}
+Invoke-RestMethod -Uri "http://localhost:3000/api/movies/ID_DU_FILM" -Method DELETE -Headers $headers
+Write-Host "Film supprimé avec succès"
+```
+
+**Bash :**
+```bash
+curl -X DELETE http://localhost:3000/api/movies/ID_DU_FILM \
+  -H "Authorization: Bearer VOTRE_TOKEN"
+```
+
+#### 📋 Routes API disponibles
+
+| Méthode | Route | Authentification | Description |
+|---------|-------|------------------|-------------|
+| `GET` | `/api/health` | ❌ | Vérification de l'état du serveur |
+| `GET` | `/api/movies` | ❌ | Liste tous les films |
+| `POST` | `/api/login` | ❌ | Authentification admin (retourne un JWT) |
+| `POST` | `/api/movies` | ✅ Admin | Créer un nouveau film |
+| `DELETE` | `/api/movies/:id` | ✅ Admin | Supprimer un film |
+
+#### 🔒 Sécurité
+
+- **Token JWT** : Expire après 2 heures
+- **Authentification** : Obligatoire pour les opérations d'écriture
+- **Variables d'environnement** : Changez les valeurs par défaut en production
+- **CORS** : Activé pour le développement (à configurer pour la production)
+
 ### 👨‍💻 Auteur
 
 Projet réalisé par Florentin Portets

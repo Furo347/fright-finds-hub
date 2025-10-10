@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
 import { z } from "zod";
+import jwt from "jsonwebtoken";
 import dbModule, { queries, seedIfEmpty, initDb, migrateImageUrlsToGcs } from "./db.js";
 
 dotenv.config();
@@ -23,6 +24,34 @@ await initDb();
 await seedIfEmpty();
 await migrateImageUrlsToGcs();
 
+// --- Auth helpers ---
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
+const ADMIN_USER = process.env.ADMIN_USER || "admin";
+const ADMIN_PASS = process.env.ADMIN_PASS || "password";
+
+function requireAdmin(req, res, next) {
+  try {
+    const header = req.headers["authorization"] || "";
+    const token = header.startsWith("Bearer ") ? header.slice("Bearer ".length) : null;
+    if (!token) return res.status(401).json({ error: "Missing token" });
+    const payload = jwt.verify(token, JWT_SECRET);
+    if (!payload || payload.role !== "admin") return res.status(403).json({ error: "Forbidden" });
+    req.user = payload;
+    return next();
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+}
+
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body || {};
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
+    const token = jwt.sign({ username, role: "admin" }, JWT_SECRET, { expiresIn: "2h" });
+    return res.json({ token });
+  }
+  return res.status(401).json({ error: "Invalid credentials" });
+});
+
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
@@ -32,7 +61,7 @@ app.get("/api/movies", async (_req, res) => {
   res.json(rows);
 });
 
-app.post("/api/movies", async (req, res) => {
+app.post("/api/movies", requireAdmin, async (req, res) => {
   const toInt = (v) => (typeof v === "string" ? parseInt(v, 10) : v);
   const toFloat = (v) => (typeof v === "string" ? parseFloat(v) : v);
   const schema = z.object({
@@ -53,7 +82,7 @@ app.post("/api/movies", async (req, res) => {
   res.status(201).json(created);
 });
 
-app.delete("/api/movies/:id", async (req, res) => {
+app.delete("/api/movies/:id", requireAdmin, async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: "Invalid id" });
   const existing = await queries.get(id);
