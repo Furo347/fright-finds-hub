@@ -3,8 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import MovieCard from "@/components/MovieCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 
 import heroImage from "@/assets/hero-horror.jpg";
@@ -13,7 +11,7 @@ import heroImage from "@/assets/hero-horror.jpg";
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
-  const { isAdmin, authHeaders, logout } = useAuth();
+  const { isAdmin, authHeaders } = useAuth();
 
   const { data: movies, isLoading, isError } = useQuery({
     queryKey: ["movies"],
@@ -107,16 +105,7 @@ const Index = () => {
 
       {/* Movies Grid */}
       <section className="container mx-auto px-4 py-16">
-        <div className="flex items-center justify-between mb-6">
-          <div />
-          <div className="flex items-center gap-3">
-            {!isAdmin ? (
-              <Link to="/login"><Button variant="secondary">Se connecter</Button></Link>
-            ) : (
-              <Button variant="outline" onClick={logout}>Se déconnecter</Button>
-            )}
-          </div>
-        </div>
+        <div className="h-6 mb-6" />
 
         {/* Simple Add form (admin only) */}
         {isAdmin && (
