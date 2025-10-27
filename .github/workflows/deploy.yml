@@ -24,6 +24,9 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Run tests
+        run: npm run test
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
