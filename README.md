@@ -29,6 +29,15 @@ Le projet a été conçu dans le cadre d’un cours visant à **apprendre le dé
 - 🔐 **IAM** pour la gestion des permissions publiques
 - 🌍 URL publique générée via GCP
 
+## 🏗️ Architecture Cloud
+
+Le projet adopte une **architecture monolithique conteneurisée** déployée sur **Google App Engine** :
+
+- Le **front-end** (React/Vite) est compilé dans le dossier `dist/` et servi en statique par App Engine.
+- Le **back-end** (Express) est exécuté dans le même service pour simplifier la maintenance.
+- La **base de données** repose sur un service managé **Cloud SQL (PostgreSQL)**.
+- Les **images** sont hébergées sur **Cloud Storage**.
+
 ---
 
 ## ⚙️ Installation & Lancement
@@ -170,6 +179,17 @@ Chaque push sur la branche `main` déclenche la pipeline :
 4. Déploiement automatique via App Engine
 
 Les logs de déploiement sont visibles dans l’onglet **Actions** du repo.
+
+## 📈 Monitoring & Observabilité
+
+L’application bénéficie d’un suivi automatique grâce aux outils intégrés de **Google Cloud Platform** :
+
+- **Cloud Logging** : centralisation des logs du serveur Express.
+- **Cloud Monitoring** : suivi des métriques de performance (CPU, latence, erreurs).
+- **Stackdriver Error Reporting** : détection automatique des erreurs applicatives.
+
+Ces outils sont configurés par défaut lors du déploiement sur App Engine et permettent
+de surveiller la santé du service en temps réel sans configuration supplémentaire.
 
 ### 👨‍💻 Auteur
 
