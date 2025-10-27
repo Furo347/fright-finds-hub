@@ -8,7 +8,7 @@ Le projet a été conçu dans le cadre d’un cours visant à **apprendre le dé
 ## 🚀 Fonctionnalités
 
 - 🎥 **Affichage dynamique** des meilleurs films d’horreur
-- 🧛‍♂️ Présentation avec **affiches, synopsis, années de sortie et notes**
+  - 🧛‍♂️ Présentation avec **affiches, synopsis, années de sortie et notes**
 - 🔍 **Filtrage / tri** par année, note ou type de film (slasher, psychologique, paranormal...)
 - 🖼️ Mise en avant de visuels attractifs (posters et fonds sombres pour l’ambiance)
 - 📱 **Responsive design** pour mobile et desktop
@@ -156,6 +156,20 @@ curl -X DELETE http://localhost:3000/api/movies/ID_DU_FILM \
 - **Authentification** : Obligatoire pour les opérations d'écriture
 - **Variables d'environnement** : Changez les valeurs par défaut en production
 - **CORS** : Activé pour le développement (à configurer pour la production)
+
+## 🧩 CI/CD
+
+Le projet utilise **GitHub Actions** pour automatiser :
+- le build du front (`vite build`),
+- et le déploiement sur **Google App Engine**.
+
+Chaque push sur la branche `main` déclenche la pipeline :
+1. Installation des dépendances
+2. Build du frontend
+3. Authentification à GCP
+4. Déploiement automatique via App Engine
+
+Les logs de déploiement sont visibles dans l’onglet **Actions** du repo.
 
 ### 👨‍💻 Auteur
 
