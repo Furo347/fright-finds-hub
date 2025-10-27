@@ -34,7 +34,14 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      - name: Run backend tests
+        run: npm run test
+
+      - name: Run frontend E2E tests
+        run: npm run test:e2e
+
       - name: Deploy to App Engine
+        if: success()
         uses: google-github-actions/deploy-appengine@v2
         with:
           deliverables: app.yaml
