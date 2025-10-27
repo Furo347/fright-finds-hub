@@ -25,7 +25,7 @@ jobs:
         run: npm run build
 
       - name: Run tests
-        run: npm run test
+        run: npm run e2e
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
