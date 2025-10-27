@@ -1,0 +1,125 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications alt+T"
+  - link "Se connecter" [ref=e4] [cursor=pointer]:
+    - /url: /login
+    - button "Se connecter" [ref=e5]
+  - generic [ref=e6]:
+    - generic [ref=e10]:
+      - heading "Films d'Horreur" [level=1] [ref=e11]
+      - paragraph [ref=e12]: Les classiques qui ont défini le genre
+      - generic [ref=e13]:
+        - img [ref=e14]
+        - textbox "Rechercher un film, réalisateur, genre..." [ref=e17]
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - img "The Texas Chain Saw Massacre" [ref=e23]
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - heading "The Texas Chain Saw Massacre" [level=3] [ref=e27]
+            - generic [ref=e29]:
+              - img [ref=e30]
+              - generic [ref=e32]: "7.5"
+          - paragraph [ref=e33]: 1974 • Tobe Hooper
+        - generic [ref=e34]:
+          - generic [ref=e35]: Slasher
+          - paragraph [ref=e36]: Cinq amis tombent sur une famille de cannibales dans le Texas rural, dont un tueur à la tronçonneuse masqué.
+      - generic [ref=e37]:
+        - img "Rosemary's Baby" [ref=e39]
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - heading "Rosemary's Baby" [level=3] [ref=e43]
+            - generic [ref=e45]:
+              - img [ref=e46]
+              - generic [ref=e48]: "8"
+          - paragraph [ref=e49]: 1968 • Roman Polanski
+        - generic [ref=e50]:
+          - generic [ref=e51]: Horreur psychologique
+          - paragraph [ref=e52]: Une jeune femme enceinte soupçonne que ses voisins font partie d'une secte satanique ayant des plans pour son bébé.
+      - generic [ref=e53]:
+        - img "A Nightmare on Elm Street" [ref=e55]
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - heading "A Nightmare on Elm Street" [level=3] [ref=e59]
+            - generic [ref=e61]:
+              - img [ref=e62]
+              - generic [ref=e64]: "7.4"
+          - paragraph [ref=e65]: 1984 • Wes Craven
+        - generic [ref=e66]:
+          - generic [ref=e67]: Slasher surnaturel
+          - paragraph [ref=e68]: Un tueur défiguré hante les rêves d'adolescents, les tuant dans leur sommeil.
+      - generic [ref=e69]:
+        - img "The Thing" [ref=e71]
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - heading "The Thing" [level=3] [ref=e75]
+            - generic [ref=e77]:
+              - img [ref=e78]
+              - generic [ref=e80]: "8.2"
+          - paragraph [ref=e81]: 1982 • John Carpenter
+        - generic [ref=e82]:
+          - generic [ref=e83]: Horreur science-fiction
+          - paragraph [ref=e84]: Une équipe de recherche en Antarctique découvre un organisme extraterrestre qui peut imiter n'importe quelle forme de vie.
+      - generic [ref=e85]:
+        - img "Psycho" [ref=e87]
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - heading "Psycho" [level=3] [ref=e91]
+            - generic [ref=e93]:
+              - img [ref=e94]
+              - generic [ref=e96]: "8.5"
+          - paragraph [ref=e97]: 1960 • Alfred Hitchcock
+        - generic [ref=e98]:
+          - generic [ref=e99]: Thriller psychologique
+          - paragraph [ref=e100]: Une jeune femme en fuite s'arrête dans un motel isolé géré par un jeune homme sous la domination de sa mère.
+      - generic [ref=e101]:
+        - img "Alien" [ref=e103]
+        - generic [ref=e105]:
+          - generic [ref=e106]:
+            - heading "Alien" [level=3] [ref=e107]
+            - generic [ref=e109]:
+              - img [ref=e110]
+              - generic [ref=e112]: "8.5"
+          - paragraph [ref=e113]: 1979 • Ridley Scott
+        - generic [ref=e114]:
+          - generic [ref=e115]: Horreur science-fiction
+          - paragraph [ref=e116]: L'équipage d'un vaisseau spatial découvre une forme de vie extraterrestre mortelle à bord.
+      - generic [ref=e117]:
+        - img "The Exorcist" [ref=e119]
+        - generic [ref=e121]:
+          - generic [ref=e122]:
+            - heading "The Exorcist" [level=3] [ref=e123]
+            - generic [ref=e125]:
+              - img [ref=e126]
+              - generic [ref=e128]: "8.1"
+          - paragraph [ref=e129]: 1973 • William Friedkin
+        - generic [ref=e130]:
+          - generic [ref=e131]: Possession démoniaque
+          - paragraph [ref=e132]: Une jeune fille est possédée par une entité démoniaque. Sa mère fait appel à deux prêtres pour un exorcisme.
+      - generic [ref=e133]:
+        - img "Halloween" [ref=e135]
+        - generic [ref=e137]:
+          - generic [ref=e138]:
+            - heading "Halloween" [level=3] [ref=e139]
+            - generic [ref=e141]:
+              - img [ref=e142]
+              - generic [ref=e144]: "7.7"
+          - paragraph [ref=e145]: 1978 • John Carpenter
+        - generic [ref=e146]:
+          - generic [ref=e147]: Slasher
+          - paragraph [ref=e148]: Un tueur masqué s'échappe d'un hôpital psychiatrique et retourne dans sa ville natale pour terroriser une jeune baby-sitter.
+      - generic [ref=e149]:
+        - img "The Shining" [ref=e151]
+        - generic [ref=e153]:
+          - generic [ref=e154]:
+            - heading "The Shining" [level=3] [ref=e155]
+            - generic [ref=e157]:
+              - img [ref=e158]
+              - generic [ref=e160]: "8.4"
+          - paragraph [ref=e161]: 1980 • Stanley Kubrick
+        - generic [ref=e162]:
+          - generic [ref=e163]: Horreur psychologique
+          - paragraph [ref=e164]: Un écrivain accepte un emploi de gardien d'hiver dans un hôtel isolé avec sa femme et son fils, mais l'hôtel cache des secrets terrifiants.
+```
