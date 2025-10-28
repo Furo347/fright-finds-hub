@@ -15,10 +15,13 @@ test('Page charge, recherche et cartes visibles', async ({ page }) => {
   await expect(page.getByText(/Alien/i).first()).toBeVisible();
 });
 
-test('Formulaire Ajouter le film présent', async ({ page }) => {
-  await page.goto('/');
-  // Bouton ajouter le film visible
-  await expect(page.getByRole('button', { name: /Ajouter le film/i })).toBeVisible();
+test("add movie button is present and clickable", async ({ page }) => {
+    await page.goto("/");
+    const addButton = page.getByRole("button", { name: /ajouter le film/i });
+    await expect(addButton).toBeVisible();
+    await addButton.click();
+    await expect(page).toHaveURL(/\/add/i); // ou l’URL de ta page de création
 });
+
 
 

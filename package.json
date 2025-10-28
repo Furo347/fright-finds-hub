@@ -15,7 +15,8 @@
     "e2e": "playwright test",
     "e2e:prod": "cross-env BASE_URL=https://fright-finds-hub.ew.r.appspot.com playwright test",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests",
-    "test:e2e": "playwright test --reporter=dot"
+    "test:e2e": "playwright test --reporter=dot",
+    "test:ui": "playwright test tests/add-movie.spec.ts --reporter=line"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
