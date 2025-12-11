@@ -24,33 +24,49 @@ jobs:
           npm ci
           npx playwright install --with-deps
 
-      - name: Build frontend
-        working-directory: ./frontend
-        run: npm run build
+      - name: Install backend deps
+        working-directory: ./backend
+        run: npm ci
 
-      - name: Start frontend preview
-        working-directory: ./frontend
+      - name: Initialize backend DB (SQLite) and seed
+        working-directory: ./backend
         run: |
-          # start vite preview in background on port 8080
-          npm run preview -- --port 8080 &
-          # wait for the server to respond (max ~30s)
-          for i in $(seq 1 30); do
-            if curl -sSf http://localhost:8080 >/dev/null; then
-              echo "preview is up"; break
+          # create sqlite DB and seed admin + sample data for tests
+          DB_DIALECT=sqlite DB_STORAGE=./test_db.sqlite npm run migrate:init
+
+      - name: Start backend (dev) and frontend (dev) with proxy
+        run: |
+          # start backend dev on port 3000 (in background), using the same sqlite file created earlier
+          (cd backend && DB_DIALECT=sqlite DB_STORAGE=./test_db.sqlite npm run dev) &
+
+          # give backend a moment to start
+          for i in $(seq 1 20); do
+            if curl -sSf http://localhost:3000/api/health >/dev/null 2>&1; then
+              echo "backend is up"; break
             else
-              echo "waiting for preview... ($i)"; sleep 1
+              echo "waiting backend... ($i)"; sleep 1
             fi
           done
+
+          # start frontend dev with proxy to backend (vite reads API_PORT from env)
+          (cd frontend && API_PORT=3000 npm run dev) &
+
+          # wait for frontend (vite) to be available on 8080
+          for i in $(seq 1 30); do
+            if curl -sSf http://localhost:8080 >/dev/null 2>&1; then
+              echo "frontend is up"; break
+            else
+              echo "waiting frontend... ($i)"; sleep 1
+            fi
+          done
+        shell: bash
 
       - name: Run frontend E2E tests
         working-directory: ./frontend
         env:
           BASE_URL: http://localhost:8080
+          CI: true
         run: npm run test:e2e
-
-      - name: Install backend deps
-        working-directory: ./backend
-        run: npm ci
 
       - name: Run backend tests
         working-directory: ./backend

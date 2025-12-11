@@ -1,9 +1,17 @@
 import { test, expect } from "@playwright/test";
 
 test("Ajout d’un nouveau film via le formulaire admin", async ({ page, request }) => {
-    const res = await request.post("/api/login", {
+    const loginUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+    const res = await request.post(`${loginUrl}/api/login`, {
         data: { username: "admin", password: "password" },
     });
+
+    if (!res.ok()) {
+        const txt = await res.text();
+        console.error('Login failed:', res.status(), txt);
+        throw new Error(`Login failed: ${res.status()}`);
+    }
+
     const body = await res.json();
     const token = body.token;
 
@@ -23,5 +31,5 @@ test("Ajout d’un nouveau film via le formulaire admin", async ({ page, request
 
     await page.getByRole("button", { name: /ajouter le film/i }).click();
 
-    await expect(page.locator("text=Test Movie Admin")).toBeVisible({ timeout: 8000 });
+    await expect(page.locator("text=Test Movie Admin")).toBeVisible({ timeout: 10000 });
 });

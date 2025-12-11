@@ -7,14 +7,13 @@ async function init() {
     await sequelize.sync({ force: true });
     console.log('Tables créées avec succès !');
 
-    // Seed admin
     const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'password', 10);
     await Admin.create({ username: process.env.ADMIN_USERNAME || 'admin', password: passwordHash });
 
-    // Seed some movies
     await Movie.bulkCreate([
       { title: 'The Shining', director: 'Stanley Kubrick', year: 1980, rating: 8.4, image_url: '', summary: 'A family heads to an isolated hotel...' },
       { title: 'Psycho', director: 'Alfred Hitchcock', year: 1960, rating: 8.5, image_url: '', summary: 'A Phoenix secretary embezzles money...' },
+      { title: 'Alien', director: 'Ridley Scott', year: 1979, rating: 8.4, image_url: 'https://storage.googleapis.com/fright-finds-hub-images/alien.jpg', summary: 'The crew of a commercial spacecraft encounter a deadly lifeform.' },
     ]);
 
     console.log('Seed terminé');

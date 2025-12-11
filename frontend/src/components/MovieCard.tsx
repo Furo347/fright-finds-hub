@@ -17,7 +17,7 @@ interface MovieCardProps {
 
 const MovieCard = ({ id, title, year, director, rating, genre, synopsis, imageUrl, onDelete }: MovieCardProps) => {
   return (
-    <Card className="group overflow-hidden border-border bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,0,0,0.3)]">
+    <Card className="movie-card group overflow-hidden border-border bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,0,0,0.3)]">
       <div className="relative overflow-hidden aspect-[2/3]">
         <img
           src={imageUrl}
