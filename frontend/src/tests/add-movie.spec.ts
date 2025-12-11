@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("Ajout d’un nouveau film via le formulaire admin", async ({ page, request }) => {
+    // use backend direct URL for login to avoid proxy issues in CI
     const loginUrl = process.env.BACKEND_URL || 'http://localhost:3000';
     const res = await request.post(`${loginUrl}/api/login`, {
         data: { username: "admin", password: "password" },
@@ -16,7 +17,8 @@ test("Ajout d’un nouveau film via le formulaire admin", async ({ page, request
     const token = body.token;
 
     await page.goto("/");
-    await page.evaluate((t) => localStorage.setItem("token", t), token);
+    // store token under the key the frontend expects
+    await page.evaluate((t) => localStorage.setItem("auth_token", t), token);
     await page.reload();
 
     await expect(page.locator("input#title")).toBeVisible();

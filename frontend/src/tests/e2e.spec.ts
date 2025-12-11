@@ -1,5 +1,16 @@
 import { test, expect } from '@playwright/test';
 
+async function loginAsAdmin(page, request) {
+  const loginUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+  const res = await request.post(`${loginUrl}/api/login`, { data: { username: 'admin', password: 'password' } });
+  if (!res.ok()) throw new Error('Login failed');
+  const body = await res.json();
+  const token = body.token;
+  await page.goto('/');
+  await page.evaluate(t => localStorage.setItem('auth_token', t), token);
+  await page.reload();
+}
+
 test('Page charge, recherche et cartes visibles', async ({ page }) => {
   await page.goto('/');
 
@@ -12,8 +23,8 @@ test('Page charge, recherche et cartes visibles', async ({ page }) => {
   await expect(page.getByText(/Alien/i).first()).toBeVisible({ timeout: 10000 });
 });
 
-test("add movie button is present and clickable", async ({ page }) => {
-    await page.goto("/");
+test("add movie button is present and clickable", async ({ page, request }) => {
+    await loginAsAdmin(page, request);
     const addButton = page.getByRole("button", { name: /ajouter le film/i });
     await expect(addButton).toBeVisible({ timeout: 5000 });
     await addButton.click();
