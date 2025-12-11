@@ -28,8 +28,24 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
+      - name: Start frontend preview
+        working-directory: ./frontend
+        run: |
+          # start vite preview in background on port 8080
+          npm run preview -- --port 8080 &
+          # wait for the server to respond (max ~30s)
+          for i in $(seq 1 30); do
+            if curl -sSf http://localhost:8080 >/dev/null; then
+              echo "preview is up"; break
+            else
+              echo "waiting for preview... ($i)"; sleep 1
+            fi
+          done
+
       - name: Run frontend E2E tests
         working-directory: ./frontend
+        env:
+          BASE_URL: http://localhost:8080
         run: npm run test:e2e
 
       - name: Install backend deps
