@@ -9,6 +9,7 @@
     "preview": "vite preview --port 5173",
     "lint": "eslint .",
     "e2e": "playwright test",
+    "test:e2e": "playwright test",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests"
   },
   "dependencies": {
