@@ -19,7 +19,7 @@ export default defineConfig({
     cwd: path.resolve(__dirname),
     url: baseURL,
     timeout: 120_000,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !!process.env.CI,
   },
   projects: [
     {
