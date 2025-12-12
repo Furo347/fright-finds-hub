@@ -2,7 +2,6 @@
 
 Ce dépôt est maintenant organisé en deux parties :
 
-
 - `backend/` : API Express + Sequelize (MySQL)
 - `frontend/` : Vite + React app
 
