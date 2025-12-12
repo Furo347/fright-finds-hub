@@ -32,14 +32,13 @@ jobs:
         run: npm run build
 
       - name: Sync backend folder to EC2
-        uses: burnett01/rsync-deployments@v7.0.1
+        uses: appleboy/scp-action@v0.1.7
         with:
-          switches: -avzr --delete
-          path: backend/
-          remote_path: ${{ secrets.EC2_APP_PATH }}
-          remote_host: ${{ secrets.EC2_HOST }}
-          remote_user: ${{ secrets.EC2_USER }}
-          remote_key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: backend/*
+          target: ${{ secrets.EC2_APP_PATH }}
 
       - name: Install prod deps & restart PM2
         uses: appleboy/ssh-action@v1.2.0
