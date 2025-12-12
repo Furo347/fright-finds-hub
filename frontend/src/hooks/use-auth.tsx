@@ -1,4 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 type AuthContextValue = {
   token: string | null;
@@ -10,9 +17,13 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Persist the token in localStorage to keep admin session across refreshes
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem("auth_token"));
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem("auth_token"),
+  );
 
   useEffect(() => {
     if (token) {
@@ -24,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Perform login against the backend, store JWT if successful
   const login = useCallback(async (username: string, password: string) => {
-    const res = await fetch("/api/login", {
+    const res = await fetch(`${API_BASE}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -49,7 +60,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return token ? { Authorization: `Bearer ${token}` } : {};
   }, [token]);
 
-  const value = useMemo<AuthContextValue>(() => ({ token, isAdmin, login, logout, authHeaders }), [token, isAdmin, login, logout, authHeaders]);
+  const value = useMemo<AuthContextValue>(
+    () => ({ token, isAdmin, login, logout, authHeaders }),
+    [token, isAdmin, login, logout, authHeaders],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -59,5 +73,3 @@ export function useAuth(): AuthContextValue {
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }
-
-

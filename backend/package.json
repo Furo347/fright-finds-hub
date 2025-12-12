@@ -11,7 +11,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc -p tsconfig.json",
     "test": "jest --detectOpenHandles --forceExit",
-    "migrate:init": "ts-node src/initDb.ts"
+    "migrate:init": "ts-node src/initDb.ts",
+    "admin:create": "ts-node src/createAdmin.ts"
   },
   "keywords": [],
   "author": "",

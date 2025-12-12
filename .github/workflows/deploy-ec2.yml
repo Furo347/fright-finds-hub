@@ -1,0 +1,55 @@
+name: Deploy backend to EC2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+
+      - name: Run backend tests
+        working-directory: backend
+        run: npm test
+
+      - name: Build backend
+        working-directory: backend
+        run: npm run build
+
+      - name: Sync backend folder to EC2
+        uses: burnett01/rsync-deployments@v8.0.0
+        with:
+          switches: -avzr --delete
+          path: backend/
+          remote_path: ${{ secrets.EC2_APP_PATH }}
+          remote_host: ${{ secrets.EC2_HOST }}
+          remote_user: ${{ secrets.EC2_USER }}
+          remote_key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Install prod deps & restart PM2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ${{ secrets.EC2_APP_PATH }}
+            npm ci --omit=dev
+            npm run build
+            pm2 restart fright-back || pm2 start dist/server.js --name fright-back
+

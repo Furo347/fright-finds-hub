@@ -35,7 +35,6 @@ async function loginAsAdmin(page, request) {
 }
 
 test('Page charge, recherche et cartes visibles', async ({ page }) => {
-  // Mock the API movies response to make the test stable in CI
   await page.route('**/api/movies', route => route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -50,12 +49,10 @@ test('Page charge, recherche et cartes visibles', async ({ page }) => {
   await expect(input).toBeVisible({ timeout: 5000 });
   await input.fill('Alien');
 
-  // Wait for the mocked movie to appear
   await expect(page.getByText(/Alien/i).first()).toBeVisible({ timeout: 10000 });
 });
 
 test("add movie button is present and clickable", async ({ page, request }) => {
-    // Mock movies for stability
     await page.route('**/api/movies', route => route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -67,7 +64,6 @@ test("add movie button is present and clickable", async ({ page, request }) => {
     await expect(addButton).toBeVisible({ timeout: 5000 });
     await addButton.click();
 
-    // Instead of asserting a strict URL, check that a form field for adding a movie is visible
     const titleField = page.getByPlaceholder('Titre');
     await expect(titleField).toBeVisible({ timeout: 5000 });
 });
