@@ -88,4 +88,6 @@ jobs:
         if: success()
         uses: google-github-actions/deploy-appengine@v2
         with:
+          working_directory: frontend
           deliverables: app.yaml
+
