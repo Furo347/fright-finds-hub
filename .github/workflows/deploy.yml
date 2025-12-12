@@ -35,6 +35,8 @@ jobs:
           DB_DIALECT=sqlite DB_STORAGE=./test_db.sqlite npm run migrate:init
 
       - name: Start backend (dev) and frontend (dev) with proxy
+        env:
+          FRONTEND_ORIGIN: http://localhost:8080
         run: |
           # start backend dev on port 3000 (in background), using the same sqlite file created earlier
           (cd backend && DB_DIALECT=sqlite DB_STORAGE=./test_db.sqlite npm run dev) &
