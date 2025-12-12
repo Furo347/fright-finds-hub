@@ -7,6 +7,8 @@ import {
   useState,
 } from "react";
 
+const apiBase = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
+
 type AuthContextValue = {
   token: string | null;
   isAdmin: boolean;
@@ -16,8 +18,6 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Persist the token in localStorage to keep admin session across refreshes
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Perform login against the backend, store JWT if successful
   const login = useCallback(async (username: string, password: string) => {
-    const res = await fetch(`${API_BASE}/api/login`, {
+    const res = await fetch(`${apiBase}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),

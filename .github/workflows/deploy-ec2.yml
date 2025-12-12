@@ -32,7 +32,7 @@ jobs:
         run: npm run build
 
       - name: Sync backend folder to EC2
-        uses: burnett01/rsync-deployments@v8.0.0
+        uses: burnett01/rsync-deployments@v7.0.1
         with:
           switches: -avzr --delete
           path: backend/
@@ -52,4 +52,3 @@ jobs:
             npm ci --omit=dev
             npm run build
             pm2 restart fright-back || pm2 start dist/server.js --name fright-back
-

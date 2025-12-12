@@ -24,8 +24,7 @@ const corsMiddleware = cors({
 });
 
 app.use(corsMiddleware);
-app.options("/api/*", corsMiddleware);
-app.options("/api", corsMiddleware);
+app.options(/\/api(?:\/.*)?/, corsMiddleware);
 app.use(express.json());
 
 app.use("/api/movies", movieRoutes);
