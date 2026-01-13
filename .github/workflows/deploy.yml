@@ -1,38 +1,43 @@
-name: Deploy Frontend to GCP App Engine
+name: Deploy Frontend to GCP
 
 on:
   push:
     branches:
-      - main
+      - main  # ou la branche que tu utilises pour la prod
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Checkout le code
-      - uses: actions/checkout@v3
+      # 1. Checkout du code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      # 2️⃣ Installer Node
-      - uses: actions/setup-node@v3
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      # 3️⃣ Installer les dépendances
-      - run: npm ci
+      # 3. Installer les dépendances et build
+      - name: Install dependencies
+        run: npm ci
         working-directory: ./frontend
 
-      # 4️⃣ Build le front avec VITE_API_BASE injecté
-      - name: Build Frontend
+      - name: Build frontend
+        run: npm run build
         working-directory: ./frontend
-        run: |
-          echo "Building frontend with VITE_API_BASE=${{ secrets.VITE_API_BASE }}"
-          export VITE_API_BASE="${{ secrets.VITE_API_BASE }}"
-          npm run build
 
-      # 5️⃣ Déploiement sur App Engine
-      - name: Deploy to GCP App Engine
+      # 4. Authentification GCP via Service Account
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # 5. Déploiement sur App Engine
+      - name: Deploy Frontend to App Engine
         uses: google-github-actions/deploy-appengine@v1
         with:
-          project_id: your-gcp-project-id
-          credentials: ${{ secrets.GCP_SA_KEY }}
+          project_id: your-gcp-project-id   # Remplace par ton project ID
           deliverables: ./frontend/app.yaml
+          promote: true
