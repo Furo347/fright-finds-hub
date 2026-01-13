@@ -1,38 +1,24 @@
-# Builder stage (use Debian base so native modules build reliably)
+# Builder stage
 FROM node:18-bullseye AS builder
-
 WORKDIR /app
 
-# Install native build deps required for some npm modules (sqlite3 etc.)
-RUN apt-get update && apt-get install -y \
-  python3 \
-  build-essential \
-  make \
-  g++ \
-  libsqlite3-dev \
-  libpq-dev \
-  default-libmysqlclient-dev \
-  --no-install-recommends && rm -rf /var/lib/apt/lists/*
-
-# Copy package manifests first for better caching
+# Installer les dépendances de build seulement
 COPY package*.json ./
+RUN npm ci
 
-# Install deps (full) to be able to build
-RUN npm ci --silent
-
-# Copy sources and build
+# Copier le code et builder
 COPY . .
-RUN npm run build --silent
+RUN npm run build
 
-# Remove devDependencies to keep final image slim
-RUN npm prune --production --silent
+# Supprimer devDependencies pour image finale
+RUN npm prune --production
 
-# Runtime stage (smaller Debian slim image)
+# Runtime stage (production)
 FROM node:18-bullseye-slim
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Copy production deps and build output
+# Copier build + dépendances prod
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
