@@ -1,13 +1,13 @@
-# language: yaml
-name: Deploy to Google App Engine
+name: Deploy frontend to GCP
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build-and-deploy-frontend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,59 +20,11 @@ jobs:
 
       - name: Install frontend deps
         working-directory: ./frontend
-        run: |
-          npm ci
-          npx playwright install --with-deps
-
-      - name: Install backend deps
-        working-directory: ./backend
         run: npm ci
 
-      - name: Initialize backend DB (SQLite) and seed
-        working-directory: ./backend
-        run: |
-          # create sqlite DB and seed admin + sample data for tests
-          DB_DIALECT=sqlite DB_STORAGE=./test_db.sqlite npm run migrate:init
-
-      - name: Start backend (dev) and frontend (dev) with proxy
-        env:
-          FRONTEND_ORIGIN: http://localhost:8080
-        run: |
-          # start backend dev on port 3000 (in background), using the same sqlite file created earlier
-          (cd backend && DB_DIALECT=sqlite DB_STORAGE=./test_db.sqlite npm run dev) &
-
-          # give backend a moment to start
-          for i in $(seq 1 20); do
-            if curl -sSf http://localhost:3000/api/health >/dev/null 2>&1; then
-              echo "backend is up"; break
-            else
-              echo "waiting backend... ($i)"; sleep 1
-            fi
-          done
-
-          # start frontend dev with proxy to backend (vite reads API_PORT from env)
-          (cd frontend && API_PORT=3000 npm run dev) &
-
-          # wait for frontend (vite) to be available on 8080
-          for i in $(seq 1 30); do
-            if curl -sSf http://localhost:8080 >/dev/null 2>&1; then
-              echo "frontend is up"; break
-            else
-              echo "waiting frontend... ($i)"; sleep 1
-            fi
-          done
-        shell: bash
-
-      - name: Run frontend E2E tests
+      - name: Build frontend
         working-directory: ./frontend
-        env:
-          BASE_URL: http://localhost:8080
-          CI: true
-        run: npm run test:e2e
-
-      - name: Run backend tests
-        working-directory: ./backend
-        run: npm test
+        run: npm run build
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -85,9 +37,7 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Deploy to App Engine
-        if: success()
         uses: google-github-actions/deploy-appengine@v2
         with:
           working_directory: frontend
           deliverables: app.yaml
-

@@ -10,20 +10,10 @@ handlers:
   - url: /assets
     static_dir: dist/assets
 
-  # Serve le CSS et JS (Vite met souvent tout dans assets, donc déjà couvert)
-
-  # Proxy API to backend when deployed behind same service (optional example)
-  - url: /api/.*
-    script: auto
-
 env_variables:
-  DB_URL: "postgres://fright_app:App!Fright2025@/fright_finds?host=/cloudsql/fright-finds-hub:europe-west9:fright-finds-sql"
+  BACKEND_URL: "http://ec2-13-51-170-177.eu-north-1.compute.amazonaws.com:3000"
   NODE_ENV: "production"
-  NPM_CONFIG_PRODUCTION: "true"
   GCS_IMAGES_BASE: "https://storage.googleapis.com/fright-finds-hub-images"
-
-beta_settings:
-  cloud_sql_instances: "fright-finds-hub:europe-west9:fright-finds-sql"
 
 automatic_scaling:
   max_instances: 3
