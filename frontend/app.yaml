@@ -1,20 +1,10 @@
 runtime: nodejs20
 
 handlers:
-  # Serve index.html à la racine
-  - url: /
-    static_files: dist/index.html
-    upload: dist/index.html
-
-  # Serve tous les fichiers du dossier dist/assets
-  - url: /assets
-    static_dir: dist/assets
-
-env_variables:
-  BACKEND_URL: "http://ec2-13-51-170-177.eu-north-1.compute.amazonaws.com:3000"
-  NODE_ENV: "production"
-  VITE_API_BASE: "http://ec2-13-51-170-177.eu-north-1.compute.amazonaws.com:3000"
+  - url: /(.*)
+    static_files: dist/\1
+    upload: dist/(.*)
 
 automatic_scaling:
-  max_instances: 3
   min_instances: 0
+  max_instances: 3
