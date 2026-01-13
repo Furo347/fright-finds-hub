@@ -20,13 +20,13 @@ services:
       DB_PASSWORD: example
       DB_NAME: fright_db
       DB_DIALECT: mysql
-      FRONTEND_ORIGIN: http://localhost:8080 # pour le CORS
+      FRONTEND_ORIGIN: https://horrordb-front.ew.r.appspot.com
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: password
     depends_on:
       - db
     command: >
-      sh -c "npx wait-on tcp:db:3306 && node dist/server.js"
+      sh -c "npx wait-on tcp:db:3306 && node dist/initDb.js && node dist/server.js"
 
 volumes:
   db_data:
