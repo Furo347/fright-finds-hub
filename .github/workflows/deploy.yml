@@ -3,7 +3,7 @@ name: Deploy Frontend to GCP
 on:
   push:
     branches:
-      - main  # ou la branche que tu utilises pour la prod
+      - main
 
 jobs:
   deploy:
@@ -38,6 +38,6 @@ jobs:
       - name: Deploy Frontend to App Engine
         uses: google-github-actions/deploy-appengine@v1
         with:
-          project_id: your-gcp-project-id   # Remplace par ton project ID
+          project_id: horrordb-front
           deliverables: ./frontend/app.yaml
           promote: true
