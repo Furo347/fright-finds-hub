@@ -13,7 +13,7 @@ handlers:
 env_variables:
   BACKEND_URL: "http://ec2-13-51-170-177.eu-north-1.compute.amazonaws.com:3000"
   NODE_ENV: "production"
-  GCS_IMAGES_BASE: "https://storage.googleapis.com/fright-finds-hub-images"
+  VITE_API_BASE: "http://ec2-13-51-170-177.eu-north-1.compute.amazonaws.com:3000"
 
 automatic_scaling:
   max_instances: 3
