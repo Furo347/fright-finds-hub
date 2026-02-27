@@ -33,76 +33,86 @@ jobs:
           docker build -t ${{ steps.image.outputs.name }} ./backend
           docker push ${{ steps.image.outputs.name }}
 
+      - name: Write deploy script
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          IMAGE_NAME: ${{ steps.image.outputs.name }}
+        run: |
+          cat > /tmp/deploy.sh << EOF
+          set -e
+          DOMAIN="api.13-48-55-141.sslip.io"
+          GHCR_TOKEN="${GHCR_TOKEN}"
+          GHCR_USER="${GHCR_USER}"
+          IMAGE_NAME="${IMAGE_NAME}"
+
+          # Install Nginx if not present
+          if ! command -v nginx &> /dev/null; then
+            sudo dnf install -y nginx
+            sudo systemctl enable nginx
+          fi
+
+          # Install Certbot if not present
+          if ! command -v certbot &> /dev/null; then
+            sudo dnf install -y certbot python3-certbot-nginx
+          fi
+
+          # Configure Nginx as reverse proxy
+          sudo tee /etc/nginx/conf.d/fright-backend.conf > /dev/null << 'NGINX'
+          server {
+              listen 80;
+              server_name api.13-48-55-141.sslip.io;
+              location / {
+                  proxy_pass http://localhost:3000;
+                  proxy_http_version 1.1;
+                  proxy_set_header Host \$host;
+                  proxy_set_header X-Real-IP \$remote_addr;
+                  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto \$scheme;
+              }
+          }
+          NGINX
+
+          sudo nginx -t && sudo systemctl restart nginx
+
+          # Obtain SSL certificate if not already present
+          if [ ! -d "/etc/letsencrypt/live/\$DOMAIN" ]; then
+            sudo certbot --nginx -d "\$DOMAIN" --non-interactive --agree-tos -m admin@example.com --redirect
+          fi
+
+          # Pull and restart Docker container
+          echo "\$GHCR_TOKEN" | docker login ghcr.io -u "\$GHCR_USER" --password-stdin
+          docker pull "\$IMAGE_NAME"
+          if [ \$(docker ps -aq -f name=fright-backend) ]; then
+            docker stop fright-backend
+            docker rm fright-backend
+          fi
+          docker run -d \
+            --name fright-backend \
+            --restart unless-stopped \
+            -p 3000:3000 \
+            "\$IMAGE_NAME"
+          docker image prune -f
+          EOF
+          chmod +x /tmp/deploy.sh
+
       - name: Deploy on EC2 via SSH
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GHCR_USER: ${{ github.actor }}
-          IMAGE_NAME: ${{ steps.image.outputs.name }}
         run: |
           printf '%s\n' "$EC2_SSH_KEY" > /tmp/ec2_key.pem
           chmod 600 /tmp/ec2_key.pem
 
+          scp -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=30 \
+              -i /tmp/ec2_key.pem \
+              /tmp/deploy.sh "$EC2_USER@$EC2_HOST:/tmp/deploy.sh"
+
           ssh -o StrictHostKeyChecking=no \
               -o ConnectTimeout=30 \
-              -p 22 \
               -i /tmp/ec2_key.pem \
-              "$EC2_USER@$EC2_HOST" \
-              GHCR_TOKEN="$GHCR_TOKEN" GHCR_USER="$GHCR_USER" IMAGE_NAME="$IMAGE_NAME" \
-              bash << 'ENDSSH'
-            set -e
-            DOMAIN="api.13-48-55-141.sslip.io"
+              "$EC2_USER@$EC2_HOST" "bash /tmp/deploy.sh && rm /tmp/deploy.sh"
 
-            # Install Nginx if not present
-            if ! command -v nginx &> /dev/null; then
-              sudo dnf install -y nginx
-              sudo systemctl enable nginx
-            fi
-
-            # Install Certbot if not present
-            if ! command -v certbot &> /dev/null; then
-              sudo dnf install -y certbot python3-certbot-nginx
-            fi
-
-            # Configure Nginx as reverse proxy
-            sudo tee /etc/nginx/conf.d/fright-backend.conf > /dev/null << 'NGINX'
-server {
-    listen 80;
-    server_name api.13-48-55-141.sslip.io;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-NGINX
-
-            sudo nginx -t && sudo systemctl restart nginx
-
-            # Obtain SSL certificate if not already present
-            if [ ! -d "/etc/letsencrypt/live/$DOMAIN" ]; then
-              sudo certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos -m admin@example.com --redirect
-            fi
-
-            # Pull and restart Docker container
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-            docker pull "$IMAGE_NAME"
-            if [ $(docker ps -aq -f name=fright-backend) ]; then
-              docker stop fright-backend
-              docker rm fright-backend
-            fi
-            docker run -d \
-              --name fright-backend \
-              --restart unless-stopped \
-              -p 3000:3000 \
-              "$IMAGE_NAME"
-            docker image prune -f
-ENDSSH
-
-          rm -f /tmp/ec2_key.pem
+          rm -f /tmp/ec2_key.pem /tmp/deploy.sh
