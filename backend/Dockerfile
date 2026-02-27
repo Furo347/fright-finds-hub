@@ -1,26 +1,20 @@
 # Builder stage
-FROM node:20-bullseye AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Installer les dépendances de build seulement
 COPY package*.json ./
 RUN npm ci
 
-# Copier le code et builder
 COPY . .
 RUN npm run build
 
-# Supprimer devDependencies pour image finale
 RUN npm prune --production
 
-# Runtime stage (production)
-FROM node:20-bullseye-slim
+FROM node:20-alpine
 WORKDIR /app
 ENV NODE_ENV=production
-# Par défaut le backend écoute sur le port 3000
 ENV PORT=3000
 
-# Copier build + dépendances prod
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
