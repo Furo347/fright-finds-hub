@@ -56,6 +56,16 @@ jobs:
           head -1 /tmp/ec2_key.pem
 
           # Deploy via SSH
+          ssh -v \
+              -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=60 \
+              -o ServerAliveInterval=10 \
+              -o ServerAliveCountMax=6 \
+              -p 22 \
+              -i /tmp/ec2_key.pem \
+              "$EC2_USER@$EC2_HOST" "echo connected" || true
+
+          # Deploy via SSH
           ssh -o StrictHostKeyChecking=no \
               -o ConnectTimeout=60 \
               -o ServerAliveInterval=10 \
