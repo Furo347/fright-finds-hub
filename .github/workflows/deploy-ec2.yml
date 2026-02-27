@@ -91,6 +91,7 @@ jobs:
             --name fright-backend \
             --restart unless-stopped \
             -p 3000:3000 \
+            -e FRONTEND_ORIGIN="https://horrordb-front.ew.r.appspot.com" \
             "\$IMAGE_NAME"
           docker image prune -f
           EOF
