@@ -1,9 +1,18 @@
 runtime: nodejs20
 
 handlers:
-  - url: /(.*)
+  # Fichiers statiques avec extension (JS, CSS, images, etc.)
+  - url: /assets
+    static_dir: dist/assets
+
+  - url: /(.+\..+)$
     static_files: dist/\1
-    upload: dist/(.*)
+    upload: dist/(.+\..+)$
+
+  # Toutes les autres routes → index.html (React Router)
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
 
 automatic_scaling:
   min_instances: 0

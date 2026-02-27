@@ -222,7 +222,7 @@ push main
    ├── 1. Checkout du code
    ├── 2. Setup Node.js 20
    ├── 3. Génération du .env.production
-   │       └── VITE_API_BASE=http://ec2-13-51-170-177.eu-north-1.compute.amazonaws.com:3000
+   │       └── VITE_API_BASE=http://ec2-13-48-55-141.eu-north-1.compute.amazonaws.com:3000
    ├── 4. npm ci + npm run build (build Vite → dist/)
    ├── 5. Authentification GCP (Service Account)
    └── 6. Deploy sur App Engine (projet : horrordb-front)
@@ -254,25 +254,24 @@ Le backend est déployé automatiquement sur une **instance AWS EC2** via GitHub
 push main
    │
    ├── 1. Checkout du code
-   ├── 2. Setup Node.js 20
-   ├── 3. npm ci (installation des dépendances)
-   ├── 4. npm test (tests Jest)
-   ├── 5. npm run build (compilation TypeScript → dist/)
-   ├── 6. Copie du dossier backend/ sur EC2 via SCP
-   └── 7. SSH sur EC2 :
-           ├── docker build -t fright-backend .
+   ├── 2. Login GitHub Container Registry (GHCR)
+   ├── 3. docker build + docker push → ghcr.io/furo347/fright-finds-backend:latest
+   └── 4. SSH sur EC2 :
+           ├── docker login ghcr.io
+           ├── docker pull ghcr.io/furo347/fright-finds-backend:latest
            ├── docker stop/rm (ancien conteneur)
-           └── docker run -d -p 3000:3000 fright-backend
+           ├── docker run -d -p 3000:3000 fright-finds-backend
+           └── docker image prune -f
 ```
 
 #### Secrets GitHub requis
 
 | Secret           | Description                                      |
 |------------------|--------------------------------------------------|
-| `EC2_HOST`       | Adresse IP publique ou DNS de l'instance EC2     |
-| `EC2_USER`       | Utilisateur SSH (ex : `ubuntu`, `ec2-user`)      |
+| `EC2_HOST`       | DNS public de l'instance EC2                     |
+| `EC2_USER`       | Utilisateur SSH (ex : `ec2-user`)                |
 | `EC2_SSH_KEY`    | Clé privée SSH (contenu du fichier `.pem`)       |
-| `EC2_APP_PATH`   | Chemin de déploiement sur l'EC2 (ex : `~/app`)  |
 
-> ⚠️ Le conteneur Docker est exposé sur le **port 3000** de l'instance EC2. Penser à ouvrir ce port dans le **Security Group** AWS.
+> ⚠️ Le `GITHUB_TOKEN` est utilisé automatiquement pour pusher sur GHCR (permission `packages: write`).
+> Le conteneur Docker est exposé sur le **port 3000**. Penser à ouvrir ce port dans le **Security Group** AWS.
 
