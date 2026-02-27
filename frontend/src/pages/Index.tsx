@@ -34,8 +34,7 @@ const Index: React.FC = () => {
     rating: 5,
     genre: "",
     synopsis: "",
-    imageUrl:
-      "https://storage.googleapis.com/fright-finds-hub-images/alien.jpg",
+    imageUrl: "/assets/alien.jpg",
   });
 
   const queryClient = useQueryClient();
@@ -73,8 +72,7 @@ const Index: React.FC = () => {
         rating: 5,
         genre: "",
         synopsis: "",
-        imageUrl:
-          "https://storage.googleapis.com/fright-finds-hub-images/alien.jpg",
+        imageUrl: "/assets/alien.jpg",
       });
     },
   });
@@ -104,7 +102,7 @@ const Index: React.FC = () => {
     imageUrl:
       movie.imageUrl ??
       movie.image_url ??
-      "https://storage.googleapis.com/fright-finds-hub-images/hero-horror.jpg",
+      "/assets/peur.jpg",
   });
 
   const normalizedMovies = useMemo(

@@ -94,6 +94,9 @@ jobs:
             -e FRONTEND_ORIGIN="https://horrordb-front.ew.r.appspot.com" \
             -e DB_DIALECT="sqlite" \
             -e DB_STORAGE="/app/data/db.sqlite" \
+            -e ADMIN_USERNAME="admin" \
+            -e ADMIN_PASSWORD="admin1234" \
+            -e JWT_SECRET="fright-finds-secret-2024" \
             -v fright-backend-data:/app/data \
             "\$IMAGE_NAME"
           docker image prune -f
