@@ -33,6 +33,13 @@ jobs:
           docker build -t ${{ steps.image.outputs.name }} ./backend
           docker push ${{ steps.image.outputs.name }}
 
+      - name: Check EC2 connectivity
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          echo "Testing connectivity to $EC2_HOST port 22..."
+          nc -zv -w 10 "$EC2_HOST" 22 && echo "Port 22 is OPEN" || echo "Port 22 is CLOSED or filtered"
+
       - name: Deploy on EC2 via SSH
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
@@ -48,7 +55,10 @@ jobs:
 
           # Deploy via SSH
           ssh -o StrictHostKeyChecking=no \
-              -o ConnectTimeout=30 \
+              -o ConnectTimeout=60 \
+              -o ServerAliveInterval=10 \
+              -o ServerAliveCountMax=6 \
+              -p 22 \
               -i /tmp/ec2_key.pem \
               "$EC2_USER@$EC2_HOST" \
               "
