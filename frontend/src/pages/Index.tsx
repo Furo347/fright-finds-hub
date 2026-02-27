@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import heroImage from "@/assets/hero-horror.jpg";
+import alienImage from "@/assets/alien.jpg";
+import peurImage from "@/assets/peur.jpg";
 
 interface Movie {
   id?: number;
@@ -34,9 +36,8 @@ const Index: React.FC = () => {
     rating: 5,
     genre: "",
     synopsis: "",
-    imageUrl: "/assets/alien.jpg",
+    imageUrl: alienImage,
   });
-
   const queryClient = useQueryClient();
   const { isAdmin, authHeaders } = useAuth();
 
@@ -72,7 +73,7 @@ const Index: React.FC = () => {
         rating: 5,
         genre: "",
         synopsis: "",
-        imageUrl: "/assets/alien.jpg",
+        imageUrl: alienImage,
       });
     },
   });
@@ -90,6 +91,13 @@ const Index: React.FC = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["movies"] }),
   });
 
+  const resolveImageUrl = (url?: string): string => {
+    if (!url) return peurImage;
+    if (url.startsWith("http")) return url;
+    // Chemin relatif type "/assets/shining.jpg" → utilise l'image importée correspondante
+    return peurImage;
+  };
+
   const mapMovie = (movie: MovieApi): Movie => ({
     id: movie.id,
     title: movie.title ?? "Titre inconnu",
@@ -99,10 +107,7 @@ const Index: React.FC = () => {
     genre: movie.genre ?? "Horreur",
     synopsis:
       movie.synopsis ?? movie.summary ?? "Synopsis indisponible pour ce film.",
-    imageUrl:
-      movie.imageUrl ??
-      movie.image_url ??
-      "/assets/peur.jpg",
+    imageUrl: resolveImageUrl(movie.imageUrl ?? movie.image_url),
   });
 
   const normalizedMovies = useMemo(

@@ -87,6 +87,8 @@ jobs:
             docker stop fright-backend
             docker rm fright-backend
           fi
+          # Remove old DB volume to force re-seed with new image URLs
+          docker volume rm fright-backend-data 2>/dev/null || true
           docker run -d \
             --name fright-backend \
             --restart unless-stopped \
