@@ -42,16 +42,16 @@ jobs:
           GHCR_USER: ${{ github.actor }}
           IMAGE_NAME: ${{ steps.image.outputs.name }}
         run: |
-          # Write SSH key - preserve exact format including newlines
           printf '%s\n' "$EC2_SSH_KEY" > /tmp/ec2_key.pem
           chmod 600 /tmp/ec2_key.pem
 
-          # Deploy via SSH
           ssh -o StrictHostKeyChecking=no \
               -o ConnectTimeout=30 \
               -p 22 \
               -i /tmp/ec2_key.pem \
-              "$EC2_USER@$EC2_HOST" bash << 'ENDSSH'
+              "$EC2_USER@$EC2_HOST" \
+              GHCR_TOKEN="$GHCR_TOKEN" GHCR_USER="$GHCR_USER" IMAGE_NAME="$IMAGE_NAME" \
+              bash << 'ENDSSH'
             set -e
             DOMAIN="api.13-48-55-141.sslip.io"
 
