@@ -51,4 +51,6 @@ jobs:
           context: ./backend
           push: true
           tags: ${{ steps.image.outputs.name }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
