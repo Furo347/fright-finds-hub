@@ -92,6 +92,9 @@ jobs:
             --restart unless-stopped \
             -p 3000:3000 \
             -e FRONTEND_ORIGIN="https://horrordb-front.ew.r.appspot.com" \
+            -e DB_DIALECT="sqlite" \
+            -e DB_STORAGE="/app/data/db.sqlite" \
+            -v fright-backend-data:/app/data \
             "\$IMAGE_NAME"
           docker image prune -f
           EOF
