@@ -49,13 +49,16 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ${{ secrets.EC2_APP_PATH }}
+            cd ${{ secrets.EC2_APP_PATH }}/backend
 
             # Stop and remove old container if exists
             if [ $(docker ps -aq -f name=fright-backend) ]; then
               docker stop fright-backend
               docker rm fright-backend
             fi
+
+            # Cleanup residual files not needed for Docker build
+            rm -rf node_modules dist
 
             # Build new Docker image
             docker build -t fright-backend .
