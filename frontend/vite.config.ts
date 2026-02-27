@@ -29,7 +29,13 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          assetFileNames: "assets/[name][extname]",
+          assetFileNames: (assetInfo) => {
+            const name = assetInfo.name ?? "";
+            if (/\.(png|jpe?g|gif|svg|webp)$/.test(name)) {
+              return "assets/[name][extname]";
+            }
+            return "assets/[name]-[hash][extname]";
+          },
         },
       },
     },

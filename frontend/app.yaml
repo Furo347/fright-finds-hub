@@ -1,15 +1,13 @@
 runtime: nodejs20
 
 handlers:
-  # Fichiers statiques avec extension (JS, CSS, images, etc.)
   - url: /assets
     static_dir: dist/assets
 
-  - url: /(.+\..+)$
-    static_files: dist/\1
-    upload: dist/(.+\..+)$
+  - url: /favicon.ico
+    static_files: dist/favicon.ico
+    upload: dist/favicon.ico
 
-  # Toutes les autres routes → index.html (React Router)
   - url: /.*
     static_files: dist/index.html
     upload: dist/index.html
