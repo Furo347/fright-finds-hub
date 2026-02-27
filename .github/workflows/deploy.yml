@@ -21,7 +21,7 @@ jobs:
       - name: Build frontend
         working-directory: ./frontend
         run: |
-          echo "VITE_API_BASE=http://ec2-13-51-170-177.eu-north-1.compute.amazonaws.com:3000" > .env.production
+          echo "VITE_API_BASE=http://ec2-13-48-55-141.eu-north-1.compute.amazonaws.com:3000" > .env.production
           npm ci
           npm run build
 
