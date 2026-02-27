@@ -23,6 +23,8 @@ jobs:
         run: |
           echo "VITE_API_BASE=https://api.13-48-55-141.sslip.io" > .env.production
           npm ci
+          mkdir -p public/assets
+          cp src/assets/*.jpg public/assets/ 2>/dev/null || true
           npm run build
 
       - name: Authenticate to GCP
