@@ -40,6 +40,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: backend/
           target: ${{ secrets.EC2_APP_PATH }}
+          exclude: backend/node_modules/**,backend/dist/**
 
       - name: Build & run Docker container on EC2
         uses: appleboy/ssh-action@v1.2.0
@@ -49,15 +50,15 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ${{ secrets.EC2_APP_PATH }}
-            
-            # Build Docker image
-            docker build -t fright-backend .
 
-            # Stop old container if exists
-            if [ $(docker ps -q -f name=fright-backend) ]; then
+            # Stop and remove old container if exists
+            if [ $(docker ps -aq -f name=fright-backend) ]; then
               docker stop fright-backend
               docker rm fright-backend
             fi
+
+            # Build new Docker image
+            docker build -t fright-backend .
 
             # Run new container
             docker run -d --name fright-backend -p 3000:3000 fright-backend

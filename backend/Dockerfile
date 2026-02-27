@@ -1,5 +1,5 @@
 # Builder stage
-FROM node:18-bullseye AS builder
+FROM node:20-bullseye AS builder
 WORKDIR /app
 
 # Installer les dépendances de build seulement
@@ -14,7 +14,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Runtime stage (production)
-FROM node:18-bullseye-slim
+FROM node:20-bullseye-slim
 WORKDIR /app
 ENV NODE_ENV=production
 # Par défaut le backend écoute sur le port 3000
