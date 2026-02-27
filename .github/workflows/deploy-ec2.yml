@@ -50,8 +50,10 @@ jobs:
           IMAGE_NAME: ${{ steps.image.outputs.name }}
         run: |
           # Write SSH key to file
-          echo "$EC2_SSH_KEY" > /tmp/ec2_key.pem
+          echo "$EC2_SSH_KEY" | tr -d '\r' > /tmp/ec2_key.pem
           chmod 600 /tmp/ec2_key.pem
+          # Debug: verify key format
+          head -1 /tmp/ec2_key.pem
 
           # Deploy via SSH
           ssh -o StrictHostKeyChecking=no \
