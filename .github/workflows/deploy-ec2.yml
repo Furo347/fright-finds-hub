@@ -28,29 +28,34 @@ jobs:
         working-directory: backend
         run: npm test
 
-      - name: Build backend
-        working-directory: backend
-        run: npm run build
-
-      - name: Sync backend folder to EC2
-        uses: appleboy/scp-action@v0.1.7
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: backend/
-          target: ${{ secrets.EC2_APP_PATH }}
-          exclude: backend/node_modules/**,backend/dist/**
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & run Docker container on EC2
+      - name: Build and push Docker image to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/fright-finds-backend:latest
+
+      - name: Deploy on EC2 (pull & restart container)
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           command_timeout: 10m
+          envs: GHCR_TOKEN,GHCR_USER,IMAGE_NAME
           script: |
-            cd ${{ secrets.EC2_APP_PATH }}/backend
+            # Login to GHCR
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+            # Pull the latest image (built on GitHub Actions, not on EC2)
+            docker pull "$IMAGE_NAME"
 
             # Stop and remove old container if exists
             if [ $(docker ps -aq -f name=fright-backend) ]; then
@@ -58,11 +63,13 @@ jobs:
               docker rm fright-backend
             fi
 
-            # Cleanup residual files not needed for Docker build
-            rm -rf node_modules dist
-
-            # Build new Docker image
-            docker build -t fright-backend .
-
-            # Run new container
-            docker run -d --name fright-backend -p 3000:3000 fright-backend
+            # Run new container from the pulled image
+            docker run -d \
+              --name fright-backend \
+              --restart unless-stopped \
+              -p 3000:3000 \
+              "$IMAGE_NAME"
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/fright-finds-backend:latest

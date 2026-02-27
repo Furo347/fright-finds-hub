@@ -30,17 +30,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build Docker image
-        run: docker build -t fright-finds-backend ./backend
-      # Optionally push to registry - set up secrets and uncomment
-      # - name: Login to registry
-      #   uses: docker/login-action@v2
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Push image
-      #   run: |
-      #     docker tag fright-finds-backend ghcr.io/${{ github.repository_owner }}/fright-finds-backend:latest
-      #     docker push ghcr.io/${{ github.repository_owner }}/fright-finds-backend:latest
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/fright-finds-backend:latest
 
